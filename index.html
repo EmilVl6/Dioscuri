@@ -871,7 +871,7 @@
 
                     
                     <div class="button-container-secondary">
-                        <a href="https://github.com/EmilVl6/Autoscroll" class="autoscroll-btn-revised outlined-dark" target="_blank" rel="noopener noreferrer">
+                        <a href="https://github.com/EmilVl6/Autoscroll" class="autoscroll-btn-revised outlined-dark version-link" target="_blank" rel="noopener noreferrer">
                             v.2.1.0
                         </a>
                         <a href="https://buymeacoffee.com/emilv16" class="autoscroll-btn-revised filled-contrast" target="_blank" rel="noopener noreferrer">
@@ -1000,6 +1000,9 @@
     </footer>
 
     <script>
+        // Universal version variable for uniformity across the site
+        const AUTOSCROLL_VERSION = 'v.2.1.1';
+
         // Add preloader class to body initially
         document.body.classList.add('preloader-active');
 
@@ -1051,9 +1054,15 @@
             index++;
         }
 
-        setInterval(cycle, 1500);
+        // Set version dynamically
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionElements = document.querySelectorAll('.footer-version, .version-link');
+            versionElements.forEach(element => {
+                element.textContent = AUTOSCROLL_VERSION;
+            });
+        });
 
-        // Floating logo fade on scroll
+        // Cycling text animation
         const floatingLogo = document.querySelector('.floating-logo');
         
         window.addEventListener('scroll', function() {
