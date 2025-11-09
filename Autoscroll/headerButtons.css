@@ -1,0 +1,75 @@
+.theme-button {
+    appearance: none;
+    background-color: #00000000;
+    border-style: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #00000000;
+    cursor: pointer;
+    display: inline-flex;
+    fill: currentcolor;
+    position: relative;
+    border-radius: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+.help-button{
+    appearance: none;
+    background-color: #00000000;
+    border-style: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #00000000;
+    cursor: pointer;
+    display: inline-flex;
+    fill: currentcolor;
+    position: relative;
+    border-radius: 10px;
+    padding-left: 0px;
+    padding-right: 0px;
+ }  
+
+.settings-button{
+    appearance: none;
+    background-color: #00000000;
+    border-style: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #00000000;
+    cursor: pointer;
+    display: inline-flex;
+    fill: currentcolor;
+    position: relative;
+    border-radius: 50%;
+    padding: 2px;
+    overflow: hidden;
+    width: 24px;
+    height: 24px;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease-in-out;
+}  
+
+.settings-button img {
+    transition: transform 0.3s ease-in-out;
+}
+
+.settings-button:hover img {
+    transform: rotate(90deg);
+}
+
+ .spacer{
+    appearance: none;
+    background-color: #00000000;
+    border-style: none;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #00000000;
+    display: inline-flex;
+    fill: currentcolor;
+    position: relative;
+    border-radius: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+ }
