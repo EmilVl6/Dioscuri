@@ -7,116 +7,136 @@
     <meta name="description" content="Tired of endless scrolling? Let Autoscroll do it for you. Perfect for long articles, websites, and social media feeds. Free Chrome extension with automatic page scrolling.">
     <meta name="keywords" content="autoscroll, automatic scrolling, chrome extension, web automation, page scrolling, browser extension">
     <meta name="author" content="Emil Vinod">
-    
-    
+
     <link rel="icon" type="image/x-icon" href="favicon.jpg">
     <link rel="icon" type="image/jpeg" href="favicon.jpg">
-    <link rel="apple-touch-icon" href="logo.jpg">
-    <link rel="shortcut icon" href="favicon.jpg">
-    
-    
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://emilvl6.github.io/Dioscuri/">
-    <meta property="og:title" content="Autoscroll™ - Your Web, On Autopilot">
-    <meta property="og:description" content="Tired of endless scrolling? Let Autoscroll do it for you. Perfect for long articles, websites, and social media feeds. Free Chrome extension.">
-    <meta property="og:image" content="https://emilvl6.github.io/Dioscuri/logo.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="Autoscroll™">
-    
-    
+
+
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://emilvl6.github.io/Dioscuri/">
     <meta property="twitter:title" content="Autoscroll™ - Your Web, On Autopilot">
     <meta property="twitter:description" content="Tired of endless scrolling? Let Autoscroll do it for you. Perfect for long articles, websites, and social media feeds. Free Chrome extension.">
     <meta property="twitter:image" content="https://emilvl6.github.io/Dioscuri/logo.jpg">
-    
-    
+
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#fa5000">
     <link rel="canonical" href="https://emilvl6.github.io/Dioscuri/">
-    
+
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@600&display=swap" as="style">
     <link rel="preload" href="Guide/dynamic_bg.jpg" as="image">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Pixelify+Sans&family=Roboto+Mono&family=Quicksand:wght@400;700&family=Monoton&family=Montserrat:wght@900&display=swap" rel="stylesheet">
+
+    <script>
+        (function() {
+            const PRELOADER_LOG_PREFIX = 'IMMEDIATE PRELOADER:';
+            const FADE_DURATION_MS = 500;
+            const DISPLAY_DURATION_MS = 3000;
+
+            function log(message) {
+                if (typeof console !== 'undefined' && console.log) {
+                    console.log(`${PRELOADER_LOG_PREFIX} ${message}`);
+                }
+            }
+
+            function createPreloader() {
+                const preloader = document.createElement('div');
+                preloader.id = 'preloader';
+                preloader.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <img src="logo.jpg" alt="Autoscroll Logo" style="width: 60px; height: 60px;">
+                        <span style="color: white; font-family: 'Quicksand', sans-serif; font-size: 2.5em; font-weight: 600;">Autoscroll™</span>
+                    </div>
+                `;
+
+                preloader.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: #fa5000;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 999999;
+                    opacity: 1;
+                    visibility: visible;
+                    transition: opacity ${FADE_DURATION_MS}ms ease;
+                `;
+
+                return preloader;
+            }
+
+            function attachPreloader(preloader) {
+                if (!document.body) {
+                    return false;
+                }
+                document.body.appendChild(preloader);
+                document.body.style.overflow = 'hidden';
+                log('Added to page');
+                return true;
+            }
+
+            function hidePreloader(preloader) {
+                preloader.style.opacity = '0';
+                document.body.style.overflow = '';
+                log('Hiding...');
+
+                setTimeout(function() {
+                    if (preloader.parentNode) {
+                        preloader.parentNode.removeChild(preloader);
+                        log('Removed');
+                    }
+                }, FADE_DURATION_MS);
+            }
+
+            function scheduleHide(preloader) {
+                setTimeout(function() {
+                    hidePreloader(preloader);
+                }, DISPLAY_DURATION_MS);
+            }
+
+            function init() {
+                const preloader = createPreloader();
+                if (!attachPreloader(preloader)) {
+                    document.addEventListener('DOMContentLoaded', function handleDomReady() {
+                        document.removeEventListener('DOMContentLoaded', handleDomReady);
+                        if (attachPreloader(preloader)) {
+                            scheduleHide(preloader);
+                        }
+                    });
+                    return;
+                }
+
+                scheduleHide(preloader);
+            }
+
+            init();
+        })();
+    </script>
+
     <style>
-        .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #fa5000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        body.preloader-active {
-            overflow: hidden;
-        }
-
-        .preloader-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .preloader-logo img {
-            width: 60px;
-            height: 60px;
-        }
-
-        .preloader-logo-text {
-            color: white;
-            font-family: 'Quicksand', sans-serif;
-            font-size: 2.5em;
-            font-weight: 600;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .preloader-logo-text.font-loaded {
-            opacity: 1;
-        }
-
-        .preloader.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Roboto Mono', monospace;
+        html, body {
+            min-height: 100%;
             background: #000000;
             color: #ffffff;
             overflow-x: hidden;
         }
 
-        
-        .header {
+        body {
+            font-family: 'Roboto Mono', monospace;
+            line-height: 1.5;
+        }
+
+        .preloader {
             position: fixed;
             top: 0;
-            width: 100%;
-            z-index: 1000;
-            background: transparent;
-        }
-
-        .navbar {
-            padding: 15px 30px;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-container {
-            display: flex;
             align-items: center;
             text-decoration: none;
             color: white;
@@ -205,21 +225,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
             text-align: center;
             max-width: 1200px;
             margin: 0 auto;
             padding: 80px 20px 40px;
-        }
-
-        
-        .title-embed {
-            width: 100%;
-            height: 200px;
-            background: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
+            gap: 20px;
         }
 
         .logo-text-main {
@@ -255,7 +266,6 @@
             }
         }
 
-        
         .tagline-embed {
             width: 100%;
             height: 60px;
@@ -276,6 +286,69 @@
             animation: fadeInText 2s ease-out 0.5s forwards;
         }
 
+        .extension-preview .slidecontainer {
+            width: 175px;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Slider_Bar.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .extension-preview .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 168px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: transparent;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        .extension-preview .slider:hover {
+            opacity: 1;
+        }
+
+        .extension-preview .slider::-webkit-slider-runnable-track {
+            height: 10px;
+            background: transparent;
+            border: none;
+        }
+
+        .extension-preview .slider::-moz-range-track {
+            height: 10px;
+            background: transparent;
+            border: none;
+        }
+
+        .extension-preview .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 0;
+            border-radius: 50%;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Slider_Thumb.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .extension-preview .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: 0;
+            border-radius: 50%;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Slider_Thumb.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
         @keyframes fadeInText {
             0% {
                 transform: translateX(-50px);
@@ -314,7 +387,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: center;
-            display: inline-flex;
+            display: flex;
             justify-content: center;
             align-items: center;
             min-width: 180px;
@@ -501,6 +574,835 @@
         }
 
         
+        .interactive-guide {
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .guide-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .guide-nav-btn {
+            padding: 12px 20px;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            background: #fa5000;
+            color: #ffffff;
+            border-radius: 25px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .guide-nav-btn:hover {
+            background: #ff6a11;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        .guide-nav-btn.active {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #fa5000;
+        }
+
+        .guide-content {
+            min-height: 500px;
+        }
+
+        .guide-step {
+            display: none;
+            animation: fadeInStep 0.5s ease;
+        }
+
+        .guide-step.active {
+            display: block;
+        }
+
+        @keyframes fadeInStep {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .step-header h3 {
+            color: #ffffff;
+            font-family: 'Playfair Display', Arial;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .step-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #fa5000;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .step-counter {
+            color: #bfbfbf;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+        }
+
+        
+        .install-steps {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .install-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid #fa5000;
+            transition: all 0.3s ease;
+        }
+
+        .install-step.completed {
+            background: rgba(80, 200, 80, 0.1);
+            border-left-color: #50c850;
+        }
+
+        .install-step.current {
+            border-left-color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .install-step:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: #fa5000;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .install-step.completed .step-number {
+            background: #50c850;
+        }
+
+        .step-text strong {
+            color: #ffffff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .step-text p {
+            color: #bfbfbf;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        .usage-guide {
+            display: grid;
+            gap: 30px;
+        }
+
+        .usage-method h4 {
+            color: #fa5000;
+            margin-bottom: 15px;
+            font-family: 'Playfair Display', Arial;
+        }
+
+        .method-steps {
+            display: grid;
+            gap: 15px;
+        }
+
+        .method-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+        }
+
+        .method-icon {
+            font-size: 24px;
+        }
+
+        .method-step p {
+            margin: 0;
+            color: #ffffff;
+        }
+
+        
+        .keyboard-shortcuts {
+            display: grid;
+            gap: 10px;
+        }
+
+        .shortcut {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .shortcut kbd {
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        .shortcut span {
+            color: #bfbfbf;
+            font-size: 14px;
+        }
+
+        
+        .speed-control {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .speed-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .speed-slider-container label {
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .speed-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .speed-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #fa5000;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .speed-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #fa5000;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        #speedValue {
+            color: #fa5000;
+            font-weight: bold;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .speed-presets {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .speed-preset {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .speed-preset:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .speed-preset.active {
+            background: #fa5000;
+            border-color: #fa5000;
+        }
+
+        
+        .settings-panel {
+            display: grid;
+            gap: 30px;
+        }
+
+        .setting-group h4 {
+            color: #fa5000;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', Arial;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #333;
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #fa5000;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .setting-info strong {
+            color: #ffffff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .setting-info p {
+            color: #bfbfbf;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .setting-select {
+            background: #333;
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+        }
+
+        .setting-select:focus {
+            outline: none;
+            border-color: #fa5000;
+        }
+
+        
+        .advanced-features {
+            display: grid;
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #fa5000;
+        }
+
+        .feature-card h4 {
+            color: #fa5000;
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', Arial;
+        }
+
+        .feature-card p {
+            color: #bfbfbf;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .feature-demo {
+            background: #111;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .demo-element {
+            background: #fa5000;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .demo-scrollable {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .demo-scrollable p {
+            margin: 0 0 8px 0;
+            font-size: 12px;
+            color: #bfbfbf;
+        }
+
+        .feature-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-toggle span {
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .stats-display {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat {
+            color: #bfbfbf;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+        }
+
+        .stat span {
+            color: #fa5000;
+            font-weight: bold;
+        }
+
+        .whitelist-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .whitelist-input input {
+            flex: 1;
+            background: #333;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .whitelist-input input:focus {
+            outline: none;
+            border-color: #fa5000;
+        }
+
+        #addWhitelistBtn {
+            padding: 8px 16px;
+            background: #fa5000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        #addWhitelistBtn:hover {
+            background: #e64500;
+        }
+
+        .whitelist-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .whitelist-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            color: #bfbfbf;
+        }
+
+        .remove-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-btn:hover {
+            background: #ff3742;
+        }
+
+        
+        .faq-section {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .faq-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease, color 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .faq-question:hover,
+        .faq-item.expanded .faq-question {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .faq-icon {
+            font-size: 20px;
+        }
+
+        .faq-question span:nth-child(2) {
+            flex: 1;
+            color: #ffffff;
+            font-family: 'Roboto Mono', monospace;
+        }
+
+        .faq-toggle {
+            color: #fa5000;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 0 20px;
+            opacity: 0;
+        }
+
+        .faq-answer p {
+            margin: 0;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .faq-answer p + p {
+            margin-top: 12px;
+        }
+
+        .faq-item.expanded .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-item.expanded .faq-answer {
+            max-height: 400px;
+            padding: 20px;
+            opacity: 1;
+        }
+
+        
+        .support-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .support-section h4 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', Arial;
+        }
+
+        .support-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .support-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .support-btn:hover {
+            background: #fa5000;
+            transform: translateY(-2px);
+        }
+
+        .guide-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .guide-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .guide-btn.primary {
+            background: #fa5000;
+            color: white;
+        }
+
+        .guide-btn.primary:hover {
+            background: #e64500;
+            transform: translateY(-2px);
+        }
+
+        .guide-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .guide-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .guide-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .guide-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .dot.active {
+            background: #fa5000;
+        }
+
+        .dot:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .keyboard-hint {
+            color: #bfbfbf;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        
+        
+        @media (max-width: 768px) {
+            .interactive-guide {
+                padding: 20px;
+            }
+
+            .guide-navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .guide-nav-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .install-steps {
+                gap: 15px;
+            }
+
+            .install-step {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .step-number {
+                align-self: center;
+            }
+
+            .usage-guide {
+                gap: 20px;
+            }
+
+            .keyboard-shortcuts {
+                gap: 8px;
+            }
+
+            .shortcut {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+
+            .speed-presets {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .settings-panel {
+                gap: 20px;
+            }
+
+            .setting-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .advanced-features {
+                gap: 20px;
+            }
+
+            .stats-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .support-options {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .guide-footer {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .keyboard-hint {
+                margin-left: 0;
+            }
+        }
+
+
+        
         .spacer {
             background-image: url('Guide/style_bg.jpg');
             min-height: 149px;
@@ -603,16 +1505,38 @@
         }
 
         
-        .store-badge-footer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 10px;
-            margin: 20px 0;
+        .install-helper-btn {
+            background: #fa5000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Roboto Mono', monospace;
+            font-size: 12px;
+            margin-top: 8px;
+            transition: all 0.3s ease;
         }
 
-        .store-badge-footer .rating-text a {
-            color: #fa5000;
+        .install-helper-btn:hover {
+            background: #e64500;
+            transform: translateY(-1px);
+        }
+
+        .install-helper-btn:disabled {
+            background: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            cursor: default;
+            transform: none;
+        }
+
+        .install-success {
+            background: rgba(80, 200, 80, 0.1);
+            border: 1px solid #50c850;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+            text-align: center;
         }
 
         
@@ -810,16 +1734,637 @@
                 font-size: 18px;
             }
         }
+        
+        .extension-ui-demo {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .extension-ui-demo h4 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        .extension-ui-demo p {
+            color: #ffe5c2;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+
+        .extension-popup-container {
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .demo-stop-overlay {
+            position: absolute;
+            top: -16px;
+            right: -16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 999px;
+            padding: 6px 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            transform: translateY(-6px);
+            z-index: 5;
+        }
+
+        .demo-stop-overlay.active {
+            pointer-events: auto;
+        }
+
+        .extension-popup-container:hover .demo-stop-overlay.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .demo-stop-overlay .stop-btn {
+            background: #ff5252;
+            border: none;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .demo-stop-overlay .stop-btn:hover {
+            background: #e04848;
+            transform: translateY(-1px);
+        }
+
+        .extension-preview {
+            width: 190px;
+            background: #fa5a00;
+            margin: 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid rgba(0, 0, 0, 0.35);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 8px;
+            box-sizing: border-box;
+            color: #000000;
+        }
+
+        .extension-preview .button-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0 5px 10px 5px;
+        }
+
+        .extension-preview .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .extension-preview .theme-button,
+        .extension-preview .help-button,
+        .extension-preview .settings-button {
+            appearance: none;
+            background-color: transparent;
+            border-style: none;
+            box-shadow: none;
+            box-sizing: border-box;
+            color: transparent;
+            cursor: pointer;
+            display: inline-flex;
+            fill: currentcolor;
+            position: relative;
+        }
+
+        .extension-preview .theme-button,
+        .extension-preview .help-button {
+            border-radius: 10px;
+            padding: 0;
+            margin: 0;
+        }
+
+        .extension-preview .settings-button {
+            border-radius: 50%;
+            padding: 2px;
+            overflow: hidden;
+            width: 24px;
+            height: 24px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .extension-preview h1 {
+            font-size: 35px;
+            font-family: sans-serif;
+            background: linear-gradient(to right, rgba(255, 215, 255, 0) 0%, rgba(225, 255, 255, 0) 20%, rgba(255, 255, 255, 0) 61%), linear-gradient(rgb(255, 255, 255) 52%, rgb(255, 127, 39) 60%, rgb(0, 0, 0) 61%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: wave 2000ms ease alternate infinite;
+            margin: 6px 0 10px 0;
+            text-align: center;
+        }
+
+        @keyframes wave {
+            0% {
+                background-position: 0 0;
+            }
+            100% {
+                background-position: 50vw 5px;
+            }
+        }
+
+        .extension-preview #tempMessage {
+            background: #f44336;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            text-align: center;
+            margin: 5px 0;
+            display: none;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .extension-preview .slidecontainer {
+            width: 175px;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Slider_Bar.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4px auto 10px;
+        }
+
+        .extension-preview .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 172px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: transparent;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+            margin-top: -4px;
+        }
+
+        .extension-preview .slider:hover {
+            opacity: 1;
+        }
+
+        .extension-preview .slider::-webkit-slider-runnable-track {
+            height: 10px;
+            background: transparent;
+            border: none;
+        }
+
+        .extension-preview .slider::-moz-range-track {
+            height: 10px;
+            background: transparent;
+            border: none;
+        }
+
+        .extension-preview .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 0;
+            border-radius: 50%;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Slider_Thumb.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .extension-preview .slider::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border: 0;
+            border-radius: 50%;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Slider_Thumb.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+        }
+
+        .extension-preview .inline {
+            white-space: nowrap;
+            overflow: hidden;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            padding-left: 10px;
+            width: 160px;
+            margin: 0 auto 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+        }
+
+        .extension-preview .inline span {
+            display: inline-block;
+        }
+
+        .extension-preview .speed-indicator {
+            opacity: 0.8;
+            margin-left: 2px;
+            color: #000000;
+        }
+
+        .extension-preview .button-wide {
+            width: 175px;
+            align-items: center;
+            appearance: none;
+            background-color: #fff;
+            border-style: none;
+            box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px, rgba(0, 0, 0, .14) 0 6px 10px 0, rgba(0, 0, 0, .12) 0 1px 18px 0;
+            box-sizing: border-box;
+            color: #000000;
+            cursor: pointer;
+            display: inline-flex;
+            fill: currentcolor;
+            font-family: sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            justify-content: center;
+            letter-spacing: .25px;
+            line-height: normal;
+            max-width: 100%;
+            overflow: visible;
+            padding: 2px 10px;
+            position: relative;
+            text-align: center;
+            text-transform: none;
+            transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1), transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            will-change: transform, opacity;
+            z-index: 0;
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Function_Button.png');
+            background-size: cover;
+            margin: 0;
+        }
+
+        .extension-preview .button-wide + .button-wide {
+            margin-top: 0;
+        }
+
+        .extension-preview .button-wide:hover {
+            background-image: url('Autoscroll/UI%20%26%20Design%20Elements/Function_Button_Hover.png');
+            background-size: cover;
+            color: #ff8b3e;
+        }
+
+        .extension-preview .button-wide:active {
+            box-shadow: 0 4px 4px 0 rgba(60, 64, 67, 0.3), 0 8px 12px 6px rgba(60, 64, 67, 0.15);
+            outline: none;
+        }
+
+        .extension-preview .button-wide:not(:disabled) {
+            box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+        }
+
+        .extension-preview .button-wide:not(:disabled):hover {
+            box-shadow: rgba(60, 64, 67, .3) 0 2px 3px 0, rgba(60, 64, 67, .15) 0 6px 10px 4px;
+        }
+
+        .extension-preview .button-wide:not(:disabled):active {
+            box-shadow: rgba(60, 64, 67, .3) 0 4px 4px 0, rgba(60, 64, 67, .15) 0 8px 12px 6px;
+        }
+
+        .extension-preview .button-wide.scrolling {
+            background-color: #4CAF50 !important;
+            background-image: none !important;
+            color: white !important;
+            animation: pulse 1.5s infinite;
+        }
+
+        .extension-preview .button-wide.scrolling:hover {
+            background-color: #45a049 !important;
+            background-image: none !important;
+            color: white !important;
+        }
+
+        .settings-preview {
+            width: 208px;
+            min-height: 220px;
+            background: rgb(255, 90, 0);
+            margin: 12px auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 10px 12px 16px 12px;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .settings-preview .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            padding: 2px;
+        }
+
+        .settings-preview .settings-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-preview .settings-title img {
+            width: 95px;
+            height: auto;
+        }
+
+        .settings-preview .version {
+            font-size: 9px;
+            color: rgba(0,0,0,0.6);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .settings-preview .back-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .settings-preview .back-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .settings-preview .setting-section {
+            padding: 0;
+            margin: 0 0 12px 0;
+            background: transparent;
+            border: none;
+        }
+
+        .settings-preview .setting-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-preview .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 6px;
+            padding: 8px 10px;
+        }
+
+        .settings-preview .setting-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-preview .setting-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .settings-preview .shortcut-key {
+            background: rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 11px;
+            font-family: monospace;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .settings-preview .action-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            margin-bottom: 0;
+        }
+
+        .settings-preview .btn {
+            flex: 1;
+            background: rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.2);
+            border-radius: 6px;
+            padding: 0;
+            font-size: 12px;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            overflow: hidden;
+            height: 26px;
+            transition: all 0.2s ease;
+        }
+
+        .settings-preview .btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .settings-preview .btn:hover {
+            background: rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+        }
+
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            margin: 12px 0 0;
+        }
+
+        .demo-reset-btn {
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .demo-reset-btn:hover {
+            background: rgba(0, 0, 0, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .demo-float-controls {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .demo-float-controls .floating-btn {
+            background: rgba(0,0,0,0.75);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            opacity: 1;
+        }
+
+        .demo-float-controls .floating-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .demo-float-controls .floating-btn.is-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(4px);
+        }
+
+        .demo-float-controls .floating-btn.is-disabled {
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .ui-explanation {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .ui-element {
+            background: #f8f9fa00;
+            border-left: 4px solid #803333;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+        }
+
+        .ui-element:hover {
+            transform: translateX(4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+
+        .ui-element strong {
+            color: #803333;
+            font-weight: 600;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .settings-preview .switch {
+            position: relative;
+            display: inline-block;
+            width: 30px;
+            height: 17px;
+        }
+        
+        .settings-preview .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .settings-preview .switch .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+        
+        .settings-preview .switch .slider:before {
+            position: absolute;
+            content: "";
+            height: 13px;
+            width: 13px;
+            left: 2px; 
+            bottom: 2px; 
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+        
+        .settings-preview .switch input:checked + .slider {
+            background-color: #ff8441;
+        }
+        
+        .settings-preview .switch input:focus + .slider {
+            box-shadow: 0 0 1px #ff8441;
+        }
+        
+        .settings-preview .switch input:checked + .slider:before {
+            -webkit-transform: translateX(13px); 
+            -ms-transform: translateX(13px);
+            transform: translateX(13px);
+        }
+        
+        .settings-preview .switch .slider.round {
+            border-radius: 17px; 
+        }
+        
+        .settings-preview .switch .slider.round:before {
+            border-radius: 50%;
+        }
     </style>
 </head>
 <body>
-    
-    <div class="preloader" id="preloader">
-        <div class="preloader-logo">
-            <img src="logo.jpg" alt="Autoscroll Logo">
-            <span class="preloader-logo-text">Autoscroll™</span>
-        </div>
-    </div>
 
     
     <a href="https://autoscroll.org" class="floating-logo">
@@ -853,6 +2398,10 @@
                         </a>
                     </div>
                 </div>
+            </div>
+            <div class="demo-float-controls" aria-live="polite">
+                <button type="button" class="floating-btn is-hidden" id="floatingStopBtn">Stop Scrolling</button>
+                <button type="button" class="floating-btn is-hidden" id="floatingResetBtn">Reset Demo</button>
             </div>
         </section>
 
@@ -890,8 +2439,7 @@
         <section class="user-guide" id="user-guide">
             <div class="section-content">
                 <h2>User Guide</h2>
-                
-                
+
                 <div class="store-badge-container">
                     <a href="https://support.google.com/chrome_webstore/answer/1050673?hl=en&visit_id=638585336257582069-681669302&p=cws_badges&rd=1#cws_badges&zippy=%2Cunderstand-chrome-web-store-badges" style="text-decoration: none;">
                         <svg height="20" viewBox="0 0 24 24" width="20">
@@ -904,8 +2452,287 @@
                     </div>
                 </div>
 
-                <div class="user-guide-notice">
-                    User Guide will be updated shortly
+                <div class="interactive-guide">
+                    <div class="guide-navigation">
+                        <button class="guide-nav-btn active" data-step="1">Install</button>
+                        <button class="guide-nav-btn" data-step="2">Basic Use</button>
+                        <button class="guide-nav-btn" data-step="3">Settings</button>
+                        <button class="guide-nav-btn" data-step="4">FAQ</button>
+                    </div>
+
+                    <div class="guide-content">
+                        <div class="guide-step active" id="step-1">
+                            <div class="step-header">
+                                <h3>Installation Guide</h3>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 25%"></div>
+                                    </div>
+                                    <span class="step-counter">Step 1 of 4</span>
+                                </div>
+                            </div>
+
+                            <div class="step-content">
+                                <div class="install-steps">
+                                    <div class="install-step" id="install-step-1">
+                                        <div class="step-number">1</div>
+                                        <div class="step-text">
+                                            <strong>Visit Chrome Web Store</strong>
+                                            <p>Click the "Get AutoScroll for Free" button above to open the Chrome Web Store in a new tab.</p>
+                                            <button class="install-helper-btn" id="step-1-action">Open Chrome Web Store →</button>
+                                            <p class="install-notice" id="install-popup-warning" style="display: none; margin-top: 10px; color: #ffb347; font-weight: 600;">Popup blocked. Please allow popups for this site or use the store link above.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="install-step" id="install-step-2">
+                                        <div class="step-number">2</div>
+                                        <div class="step-text">
+                                            <strong>Add to Chrome</strong>
+                                            <p>Click the blue "Add to Chrome" button on the extension page.</p>
+                                            <button class="install-helper-btn" id="step-2-action" disabled>I clicked "Add to Chrome"</button>
+                                            <p id="install-auto-detect" style="display: none; margin-top: 10px; color: #50c850; font-weight: 600;">Autoscroll is already installed on this browser.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="install-step" id="install-step-3">
+                                        <div class="step-number">3</div>
+                                        <div class="step-text">
+                                            <strong>You're All Set!</strong>
+                                            <p>The Autoscroll icon will appear in your browser toolbar. Click the puzzle icon to pin it so it stays visible, then tap Autoscroll to start scrolling.</p>
+                                            <button class="install-helper-btn" id="step-3-action" disabled>I pinned the Autoscroll icon</button>
+                                            <div class="install-success" id="step-3-success" style="display: none;">
+                                                <span style="color: #50c850; font-weight: bold;">✓ Extension Installed Successfully!</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="guide-step" id="step-2">
+                            <div class="step-header">
+                                <h3>How to Use Autoscroll</h3>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 50%"></div>
+                                    </div>
+                                    <span class="step-counter">Step 2 of 4</span>
+                                </div>
+                            </div>
+
+                            <div class="step-content">
+                                <div class="extension-ui-demo">
+                                    <h4>Extension Interface</h4>
+                                    <p>After installation, click the Autoscroll icon in your browser toolbar to open the control panel:</p>
+                                    
+                                            <div class="extension-popup-container">
+                                        <div class="extension-preview extension-popup">
+                                            <div class="button-container">
+                                                <button class="theme-button" id="logo">
+                                                    <img id="logoImage" src="Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128.png" alt="Logo" width="20">
+                                                </button>
+                                                <div class="header-actions">
+                                                    <button class="help-button" id="help">
+                                                        <img id="helpImage" src="Autoscroll/UI%20%26%20Design%20Elements/Help_Button_White.png" alt="Help" width="20">
+                                                    </button>
+                                                    <button class="settings-button" id="settings">
+                                                        <img id="settingsImage" src="Autoscroll/UI%20%26%20Design%20Elements/Settings_Button_White.png" alt="Settings" width="20">
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <h1>Autoscroll</h1>
+                                            <div class="slidecontainer">
+                                                <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+                                            </div>
+                                            <br>
+                                            <div class="inline">
+                                                <span id="sent">Speed  :  </span>
+                                                <span id="speed">50</span><span id="speedLabel" class="speed-indicator"> (Medium)</span>
+                                            </div>
+                                            <br>
+                                            <button class="button-wide" id="scrollU">Scroll Up</button>
+                                            <button class="button-wide" id="scrollD">Scroll Down</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="demo-controls">
+                                    </div>
+                                    
+                                    <div class="ui-explanation">
+                                        <div class="ui-element">
+                                            <strong>Speed Slider:</strong> Set the slider to 1 for a gentle test run.
+                                        </div>
+                                        <div class="ui-element">
+                                            <strong>Scroll Buttons:</strong> Tap Scroll Down to start, Scroll Up to reverse, and use Alt+Shift+D or Alt+Shift+U for quick keyboard control. A Stop control appears whenever Autoscroll is active.
+                                        </div>
+                                        <div class="ui-element">
+                                            <strong>Settings Icon:</strong> Click the gear after experimenting to open settings options, and tap the Autoscroll logo as an easter egg.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-step" id="step-3">
+                            <div class="step-header">
+                                <h3>Settings & Customization</h3>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 75%"></div>
+                                    </div>
+                                    <span class="step-counter">Step 3 of 4</span>
+                                </div>
+                            </div>
+
+                            <div class="step-content">
+                                <div class="extension-ui-demo">
+                                    <h4>Extension Settings</h4>
+                                    <p>Click the settings icon in the extension popup to access advanced options:</p>
+                                    
+                                    <div class="extension-popup-container">
+                                        <div class="settings-preview extension-settings">
+                                            <div class="header">
+                                                <div class="settings-title">
+                                                    <img src="Autoscroll/UI%20%26%20Design%20Elements/Settings.png" alt="Settings" width="85">
+                                                    <div class="version">v2.1.1</div>
+                                                </div>
+                                                <button class="back-btn" id="back">
+                                                    <img src="Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128.png" alt="Back" width="20">
+                                                </button>
+                                            </div>
+
+                                            <div class="setting-section">
+                                                <div class="setting-item">
+                                                    <span class="setting-label">Rebound at edge</span>
+                                                    <label class="switch">
+                                                        <input type="checkbox" id="reboundEdge">
+                                                        <span class="slider round"></span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="setting-section">
+                                                <div class="setting-label" style="margin-bottom: 8px;">Keyboard Shortcuts</div>
+                                                <div class="setting-item">
+                                                    <span class="setting-label">Scroll Up</span>
+                                                    <span class="shortcut-key">alt+shift+u</span>
+                                                </div>
+                                                <div class="setting-item">
+                                                    <span class="setting-label">Scroll Down</span>
+                                                    <span class="shortcut-key">alt+shift+d</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="action-buttons">
+                                                <button class="btn" id="forms">
+                                                    <img src="Autoscroll/UI%20%26%20Design%20Elements/forms.png" alt="Feedback">
+                                                </button>
+                                                <button class="btn" id="bmac">
+                                                    <img src="Autoscroll/UI%20%26%20Design%20Elements/bmac.png" alt="Coffee">
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="ui-explanation">
+                                        <div class="ui-element">
+                                            <strong>Autoscroll Homepage:</strong> Click the Autoscroll logo to return to Homepage.
+                                        </div>
+                                        <div class="ui-element">
+                                            <strong>Rebound at edge:</strong> Toggle this to have Autoscroll automatically rebound when it hits the top or bottom of a page.
+                                        </div>
+                                        <div class="ui-element">
+                                            <strong>Keyboard Shortcuts:</strong> Alt+Shift+D starts or stops scrolling down, Alt+Shift+U controls upward scrolling, and both work even while Autoscroll is moving or closed.
+                                        </div>
+                                        <div class="ui-element">
+                                            <strong>Support Buttons:</strong> “Say Hi” opens the feedback form for suggestions or issues, while “Buy me a coffee” is a direct donation link.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guide-step" id="step-4">
+                            <div class="step-header">
+                                <h3>Frequently Asked Questions</h3>
+                                <div class="step-progress">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 100%"></div>
+                                    </div>
+                                    <span class="step-counter">Step 4 of 4</span>
+                                </div>
+                            </div>
+
+                            <div class="step-content">
+                                <div class="faq-section">
+                                    <div class="faq-item">
+                                        <div class="faq-question" onclick="toggleFAQ(this)">
+                                            <span>Why isn't Autoscroll working on some websites?</span>
+                                            <span class="faq-toggle">▼</span>
+                                        </div>
+                                        <div class="faq-answer">
+                                            <p>Some websites use custom scrolling implementations or have anti-automation measures. Autoscroll works best on standard web pages with traditional scrolling behavior. It will provide a warning if Autoscroll is not available.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="faq-item">
+                                        <div class="faq-question" onclick="toggleFAQ(this)">
+                                            <span>How do I change the scrolling speed?</span>
+                                            <span class="faq-toggle">▼</span>
+                                        </div>
+                                        <div class="faq-answer">
+                                            <p>Use the speed slider in the extension popup with a 1 to 100 range and intuitive speed modes.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="faq-item">
+                                        <div class="faq-question" onclick="toggleFAQ(this)">
+                                            <span>How do I stop scrolling?</span>
+                                            <span class="faq-toggle">▼</span>
+                                        </div>
+                                        <div class="faq-answer">
+                                            <p>Click the Stop button or the same direction shortcut as the one in scroll.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="faq-item">
+                                        <div class="faq-question" onclick="toggleFAQ(this)">
+                                            <span>Is my data safe?</span>
+                                            <span class="faq-toggle">▼</span>
+                                        </div>
+                                        <div class="faq-answer">
+                                            <p>Yes! Autoscroll only runs locally in your browser and doesn't collect or transmit any personal data. All settings are stored locally.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="faq-item">
+                                        <div class="faq-question" onclick="toggleFAQ(this)">
+                                            <span>Does it work on mobile?</span>
+                                            <span class="faq-toggle">▼</span>
+                                        </div>
+                                        <div class="faq-answer">
+                                            <p>Currently, Autoscroll is only available for desktop Chrome browsers.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="support-section">
+                                    <h4>Need More Help?</h4>
+                                    <div class="support-options">
+                                        <a href="https://github.com/EmilVl6/Autoscroll/issues" target="_blank" class="support-btn">
+                                            Report Bug
+                                        </a>
+                                        <a href="mailto:emilvinod@gmail.com" class="support-btn">
+                                            Contact Me :)
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
                 </div>
             </div>
         </section>
@@ -927,7 +2754,7 @@
                 <div class="suggestions-embed">
                     <div class="text-container">
                         <h3>Implement scrolling to specific elements ~ Anon (In Progress)</h3>
-                        <p>A great idea, this feature will be implemented by v.2.1.1</p>
+                        <p>A great idea, this feature will be implemented by v.2.1.2</p>
                     </div>
                     <div class="text-container completed">
                         <h3>Increase maximum speed of scroll ~ Niv (Completed)</h3>
@@ -1000,61 +2827,22 @@
     </footer>
 
     <script>
-        // Universal version variable for uniformity across the site
         const AUTOSCROLL_VERSION = 'v.2.1.1';
 
-        // Add preloader class to body initially
-        document.body.classList.add('preloader-active');
-
-        // Font loading detection and preloader
-        function checkFontLoaded() {
-            return document.fonts.check('600 2.5em Quicksand');
-        }
-
-        function showPreloaderText() {
-            const preloaderText = document.querySelector('.preloader-logo-text');
-            if (preloaderText) {
-                preloaderText.classList.add('font-loaded');
-            }
-        }
-
-        function hidePreloader() {
-            const preloader = document.getElementById('preloader');
-            document.body.classList.remove('preloader-active');
-            preloader.classList.add('fade-out');
-            setTimeout(() => {
-                preloader.style.display = 'none';
-            }, 500);
-        }
-
-        // Wait for fonts to load, then show text
-        if (document.fonts && document.fonts.ready) {
-            document.fonts.ready.then(function() {
-                if (checkFontLoaded()) {
-                    showPreloaderText();
-                }
-            });
-        } else {
-            // Fallback for browsers without font loading API
-            setTimeout(showPreloaderText, 100);
-        }
-
-        // Simple preloader - just wait for page load
-        window.addEventListener('load', function() {
-            setTimeout(hidePreloader, 500);
-        });
-
-        // Cycling text animation
         const cycleTextElement = document.getElementById('cycleText');
         const words = ['reluctantly', 'with a swiss knife', 'begrudgingly', 'while spinning', 'accidentally', 'using only toes', 'blindfolded', 'spitefully'];
         let index = 0;
 
         function cycle() {
-            cycleTextElement.textContent = words[(index % words.length)];
+            cycleTextElement.textContent = words[index % words.length];
             index++;
         }
 
-        // Set version dynamically
+        if (cycleTextElement) {
+            cycle();
+            setInterval(cycle, 1500);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const versionElements = document.querySelectorAll('.footer-version, .version-link');
             versionElements.forEach(element => {
@@ -1062,13 +2850,12 @@
             });
         });
 
-        // Cycling text animation
         const floatingLogo = document.querySelector('.floating-logo');
         
         window.addEventListener('scroll', function() {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const fadeStart = 100; // Start fading after 100px scroll
-            const fadeDistance = 200; // Complete fade over 200px
+            const fadeStart = 100;
+            const fadeDistance = 200;
             
             if (scrollTop <= fadeStart) {
                 floatingLogo.style.opacity = '1';
@@ -1077,6 +2864,919 @@
                 floatingLogo.style.opacity = opacity;
             } else {
                 floatingLogo.style.opacity = '0';
+            }
+        });
+
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        function updateGuideUI() {
+            document.querySelectorAll('.guide-nav-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index + 1 === currentStep);
+            });
+
+            document.querySelectorAll('.guide-step').forEach((step, index) => {
+                step.classList.toggle('active', index + 1 === currentStep);
+            });
+
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index + 1 === currentStep);
+            });
+
+            const prevButton = document.getElementById('prevBtn');
+            if (prevButton) {
+                prevButton.disabled = currentStep === 1;
+            }
+
+            const nextButton = document.getElementById('nextBtn');
+            if (nextButton) {
+                nextButton.textContent = currentStep === totalSteps ? 'Finish 🎉' : 'Next →';
+            }
+
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.width = `${(currentStep / totalSteps) * 100}%`;
+            }
+        }
+
+        function goToStep(step) {
+            if (step >= 1 && step <= totalSteps) {
+                currentStep = step;
+                updateGuideUI();
+            }
+        }
+
+        document.querySelectorAll('.guide-nav-btn').forEach((btn, index) => {
+            btn.addEventListener('click', () => goToStep(index + 1));
+        });
+
+        document.querySelectorAll('.dot').forEach((dot, index) => {
+            dot.addEventListener('click', () => goToStep(index + 1));
+        });
+        
+        const prevButton = document.getElementById('prevBtn');
+        if (prevButton) {
+            prevButton.addEventListener('click', () => {
+                if (currentStep > 1) {
+                    goToStep(currentStep - 1);
+                }
+            });
+        }
+
+        const nextButton = document.getElementById('nextBtn');
+        if (nextButton) {
+            nextButton.addEventListener('click', () => {
+                if (currentStep < totalSteps) {
+                    goToStep(currentStep + 1);
+                } else {
+                    document.getElementById('user-guide').scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                        alert('Congratulations! You\'ve completed the Autoscroll User Guide. Ready to start scrolling?');
+                    }, 500);
+                }
+            });
+        }
+        
+
+        const speedSlider = document.getElementById('speedSlider');
+        const speedValue = document.getElementById('speedValue');
+
+        if (speedSlider && speedValue) {
+            speedSlider.addEventListener('input', function() {
+                speedValue.textContent = this.value;
+                document.querySelectorAll('.speed-preset').forEach(preset => {
+                    preset.classList.toggle('active', parseInt(preset.dataset.speed) === parseInt(this.value));
+                });
+            });
+        }
+
+        document.querySelectorAll('.speed-preset').forEach(preset => {
+            preset.addEventListener('click', function() {
+                const speed = parseInt(this.dataset.speed);
+                if (speedSlider) speedSlider.value = speed;
+                if (speedValue) speedValue.textContent = speed;
+                
+                document.querySelectorAll('.speed-preset').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        let demoInterval;
+
+        function toggleFAQ(questionElement) {
+            const faqItem = questionElement.parentElement;
+            const isExpanded = faqItem.classList.contains('expanded');
+            document.querySelectorAll('.faq-item').forEach(item => item.classList.remove('expanded'));
+            if (!isExpanded) {
+                faqItem.classList.add('expanded');
+            }
+        }
+
+        window.toggleFAQ = toggleFAQ;
+
+        const addWhitelistBtn = document.getElementById('addWhitelistBtn');
+        if (addWhitelistBtn) {
+            addWhitelistBtn.addEventListener('click', function() {
+                const input = document.getElementById('whitelistInput');
+                if (!input) return;
+                const site = input.value.trim();
+                if (!site) return;
+
+                const whitelistList = document.getElementById('whitelistList');
+                if (!whitelistList || document.querySelector(`[data-site="${site}"]`)) {
+                    return;
+                }
+
+                const item = document.createElement('div');
+                item.className = 'whitelist-item';
+                item.setAttribute('data-site', site);
+                item.innerHTML = `${site} <button class="remove-btn" onclick="removeWhitelistItem(this)">×</button>`;
+                whitelistList.appendChild(item);
+                input.value = '';
+            });
+        }
+
+        function removeWhitelistItem(btn) {
+            btn.parentElement.remove();
+        }
+
+        window.removeWhitelistItem = removeWhitelistItem;
+
+        const CHROME_STORE_URL = 'https://chromewebstore.google.com/detail/autoscroll-automatic-page/mofpoefmipkeaakcglcfamacffochlid';
+        const AUTOSCROLL_EXTENSION_ID = 'mofpoefmipkeaakcglcfamacffochlid';
+        const INSTALL_PROGRESS_KEY = 'autoscroll_install_progress_v1';
+        const INSTALL_STEP_UI = {
+            'install-step-1': {
+                buttonId: 'step-1-action',
+                completedText: 'Opened Chrome Web Store ✓',
+                warningId: 'install-popup-warning'
+            },
+            'install-step-2': {
+                buttonId: 'step-2-action',
+                completedText: 'Add to Chrome confirmed ✓'
+            },
+            'install-step-3': {
+                buttonId: 'step-3-action',
+                completedText: 'Autoscroll pinned ✓',
+                successBannerId: 'step-3-success'
+            }
+        };
+        let extensionAutoDetected = false;
+
+        function loadInstallProgress() {
+            try {
+                const raw = localStorage.getItem(INSTALL_PROGRESS_KEY);
+                if (!raw) return {};
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (err) {
+                console.warn('Install progress load failed', err);
+                return {};
+            }
+        }
+
+        function saveInstallProgress(progress) {
+            try {
+                localStorage.setItem(INSTALL_PROGRESS_KEY, JSON.stringify(progress));
+            } catch (err) {
+                console.warn('Install progress save failed', err);
+            }
+        }
+
+        function recordInstallStep(stepId) {
+            const progress = loadInstallProgress();
+            if (!progress[stepId]) {
+                progress[stepId] = true;
+                saveInstallProgress(progress);
+            }
+        }
+
+        function applySavedInstallProgress() {
+            const progress = loadInstallProgress();
+            const completedSteps = Object.keys(progress).filter(stepId => progress[stepId]);
+            if (!completedSteps.length) {
+                return;
+            }
+
+            completedSteps
+                .sort((a, b) => {
+                    const aMatch = a.match(/(\d+)/);
+                    const bMatch = b.match(/(\d+)/);
+                    const aNum = aMatch ? parseInt(aMatch[1], 10) : 0;
+                    const bNum = bMatch ? parseInt(bMatch[1], 10) : 0;
+                    return aNum - bNum;
+                })
+                .forEach(stepId => {
+                    markInstallStepCompleted(stepId, { suppressScroll: true, skipPersistence: true });
+                    const uiMap = INSTALL_STEP_UI[stepId];
+                    if (!uiMap) return;
+
+                    if (uiMap.buttonId) {
+                        const button = document.getElementById(uiMap.buttonId);
+                        if (button) {
+                            button.disabled = true;
+                            button.textContent = uiMap.completedText;
+                        }
+                    }
+
+                    if (uiMap.warningId) {
+                        const warning = document.getElementById(uiMap.warningId);
+                        if (warning) {
+                            warning.style.display = 'none';
+                        }
+                    }
+
+                    if (uiMap.successBannerId) {
+                        const banner = document.getElementById(uiMap.successBannerId);
+                        if (banner) {
+                            banner.style.display = 'block';
+                        }
+                    }
+                });
+
+            updateActiveInstallStep({ scrollIntoView: false });
+        }
+
+        function updateActiveInstallStep(options = {}) {
+            const { scrollIntoView = true } = options;
+            const steps = Array.from(document.querySelectorAll('.install-step'));
+            if (!steps.length) return;
+
+            steps.forEach(step => step.classList.remove('current'));
+            const nextUnfinished = steps.find(step => !step.classList.contains('completed'));
+            if (nextUnfinished) {
+                nextUnfinished.classList.add('current');
+                if (scrollIntoView) {
+                    nextUnfinished.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateActiveInstallStep({ scrollIntoView: false });
+
+            const step1Button = document.getElementById('step-1-action');
+            if (step1Button) {
+                step1Button.addEventListener('click', () => {
+                    step1Button.disabled = true;
+                    step1Button.textContent = 'Opening Chrome Web Store...';
+                    const warning = document.getElementById('install-popup-warning');
+                    if (warning) {
+                        warning.style.display = 'none';
+                    }
+
+                    const opened = openChromeStore();
+                    if (!opened) {
+                        if (warning) {
+                            warning.style.display = 'block';
+                        }
+                        step1Button.disabled = false;
+                        step1Button.textContent = 'Open Chrome Web Store →';
+                        return;
+                    }
+
+                    setTimeout(() => {
+                        step1Button.textContent = 'Opened Chrome Web Store ✓';
+                        markInstallStepCompleted('install-step-1');
+                    }, 1200);
+                });
+            }
+
+            const step2Button = document.getElementById('step-2-action');
+            if (step2Button) {
+                step2Button.addEventListener('click', () => {
+                    markInstallStepCompleted('install-step-2');
+                    step2Button.disabled = true;
+                    step2Button.textContent = 'Add to Chrome confirmed ✓';
+                });
+            }
+
+            const step3Button = document.getElementById('step-3-action');
+            if (step3Button) {
+                step3Button.addEventListener('click', () => {
+                    markInstallStepCompleted('install-step-3');
+                    step3Button.disabled = true;
+                    step3Button.textContent = 'Autoscroll pinned ✓';
+                    const successBanner = document.getElementById('step-3-success');
+                    if (successBanner) {
+                        successBanner.style.display = 'block';
+                    }
+                });
+            }
+
+            applySavedInstallProgress();
+
+            attemptAutoDetectInstall();
+        });
+
+        function markInstallStepCompleted(stepId, options = {}) {
+            const { suppressScroll = false, skipPersistence = false } = options;
+            const step = document.getElementById(stepId);
+            if (!step || step.classList.contains('completed')) {
+                updateActiveInstallStep({ scrollIntoView: !suppressScroll });
+                return;
+            }
+
+            step.classList.add('completed');
+
+            if (!skipPersistence) {
+                recordInstallStep(stepId);
+            }
+
+            const match = stepId.match(/install-step-(\d+)/);
+            if (match) {
+                const currentIndex = parseInt(match[1], 10);
+                const nextButton = document.getElementById(`step-${currentIndex + 1}-action`);
+                if (nextButton) {
+                    nextButton.disabled = false;
+                }
+            }
+
+            updateActiveInstallStep({ scrollIntoView: !suppressScroll });
+        }
+
+        function openChromeStore() {
+            const newTab = window.open(CHROME_STORE_URL, '_blank');
+            if (newTab) {
+                try {
+                    newTab.opener = null;
+                } catch (err) {
+                }
+                return true;
+            }
+
+            return false;
+        }
+
+        function handleExtensionDetected() {
+            if (extensionAutoDetected) return;
+            extensionAutoDetected = true;
+
+            const step1Button = document.getElementById('step-1-action');
+            if (step1Button) {
+                step1Button.disabled = true;
+                step1Button.textContent = 'Autoscroll already installed ✓';
+            }
+
+            const step2Button = document.getElementById('step-2-action');
+            if (step2Button) {
+                step2Button.disabled = true;
+                step2Button.textContent = 'Extension detected automatically ✓';
+            }
+
+            markInstallStepCompleted('install-step-1', { suppressScroll: true });
+            markInstallStepCompleted('install-step-2', { suppressScroll: true });
+
+            const statusMessage = document.getElementById('install-auto-detect');
+            if (statusMessage) {
+                statusMessage.style.display = 'block';
+            }
+        }
+
+    function detectAutoscrollInstalled() {
+            return new Promise(resolve => {
+                const runtimeApi = (window.chrome && window.chrome.__nativeRuntime) || null;
+                if (!runtimeApi || typeof runtimeApi.sendMessage !== 'function') {
+                    resolve(false);
+                    return;
+                }
+
+                let resolved = false;
+
+                try {
+                    runtimeApi.sendMessage(
+                        AUTOSCROLL_EXTENSION_ID,
+                        { source: 'autoscroll-site', action: 'PING' },
+                        response => {
+                            if (resolved) return;
+                            resolved = true;
+
+                            if (runtimeApi.lastError) {
+                                resolve(false);
+                                return;
+                            }
+
+                            if (response && (response.installed === true || response.status === 'ok')) {
+                                resolve(true);
+                                return;
+                            }
+
+                            resolve(true);
+                        }
+                    );
+                } catch (err) {
+                    resolved = true;
+                    resolve(false);
+                    return;
+                }
+
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(false);
+                    }
+                }, 1500);
+            });
+        }
+
+        function attemptAutoDetectInstall(retryCount = 0) {
+            detectAutoscrollInstalled().then(installed => {
+                if (installed) {
+                    handleExtensionDetected();
+                } else if (!extensionAutoDetected && retryCount < 6) {
+                    setTimeout(() => attemptAutoDetectInstall(retryCount + 1), 3000);
+                }
+            });
+        }
+
+        window.openChromeStore = openChromeStore;
+
+        (function initializeAutoscrollDemo() {
+            const nativeChrome = typeof window.chrome !== 'undefined' ? window.chrome : undefined;
+            const nativeRuntime = nativeChrome && nativeChrome.runtime && typeof nativeChrome.runtime.sendMessage === 'function'
+                ? nativeChrome.runtime
+                : null;
+
+            const STORAGE_PREFIX = 'autoscroll_demo_sync_';
+            const contentListeners = new Set();
+            const extensionListeners = new Set();
+            let runtimeLastError = null;
+
+            function addListenerForContext(listener) {
+                if (window.__autoscrollListenerContext === 'content') {
+                    contentListeners.add(listener);
+                } else {
+                    extensionListeners.add(listener);
+                }
+            }
+
+            function removeListener(listener) {
+                contentListeners.delete(listener);
+                extensionListeners.delete(listener);
+            }
+
+            function readStoredValue(key, defaultValue) {
+                const stored = localStorage.getItem(STORAGE_PREFIX + key);
+                if (stored === null || stored === undefined) {
+                    return typeof defaultValue !== 'undefined' ? defaultValue : undefined;
+                }
+                try {
+                    return JSON.parse(stored);
+                } catch (err) {
+                    return stored;
+                }
+            }
+
+            function writeStoredValue(key, value) {
+                try {
+                    localStorage.setItem(STORAGE_PREFIX + key, JSON.stringify(value));
+                } catch (err) {
+                    console.warn('Autoscroll demo storage write failed:', err);
+                }
+            }
+
+            const chromeMock = {};
+            if (nativeChrome) {
+                Object.keys(nativeChrome).forEach(prop => {
+                    try {
+                        chromeMock[prop] = nativeChrome[prop];
+                    } catch (err) {
+                    }
+                });
+            }
+
+            chromeMock.__nativeRuntime = nativeRuntime;
+            chromeMock.runtime = chromeMock.runtime || {};
+            Object.assign(chromeMock.runtime, {
+                id: 'autoscroll-demo',
+                get lastError() {
+                    return runtimeLastError;
+                },
+                set lastError(value) {
+                    runtimeLastError = value;
+                },
+                onMessage: {
+                    addListener: addListenerForContext,
+                    removeListener
+                },
+                sendMessage(message, responseCallback) {
+                    return new Promise(resolve => {
+                        let responded = false;
+                        let responseValue;
+
+                        extensionListeners.forEach(listener => {
+                            try {
+                                listener(message, {}, response => {
+                                    responded = true;
+                                    responseValue = response;
+                                    if (typeof responseCallback === 'function') {
+                                        responseCallback(response);
+                                    }
+                                    resolve(response);
+                                });
+                            } catch (err) {
+                                console.error('Autoscroll demo runtime listener error:', err);
+                            }
+                        });
+
+                        if (!responded) {
+                            if (typeof responseCallback === 'function') {
+                                responseCallback();
+                            }
+                            resolve();
+                        }
+                    });
+                }
+            });
+
+            chromeMock.tabs = chromeMock.tabs || {};
+            Object.assign(chromeMock.tabs, {
+                query(queryInfo, callback) {
+                    if (typeof callback === 'function') {
+                        callback([{ id: 'autoscroll-demo-tab', url: window.location.href }]);
+                    }
+                },
+                sendMessage(tabId, message, responseCallback) {
+                    runtimeLastError = null;
+                    let responded = false;
+                    let responseValue;
+
+                    contentListeners.forEach(listener => {
+                        try {
+                            listener(message, { tab: { id: tabId } }, response => {
+                                responded = true;
+                                responseValue = response;
+                            });
+                        } catch (err) {
+                            console.error('Autoscroll demo content listener error:', err);
+                        }
+                    });
+
+                    if (!responded) {
+                        runtimeLastError = { message: 'Could not establish connection. Receiving end does not exist.' };
+                    }
+
+                    if (typeof responseCallback === 'function') {
+                        responseCallback(responseValue);
+                    }
+
+                    return Promise.resolve(responseValue);
+                }
+            });
+
+            chromeMock.storage = chromeMock.storage || {};
+            chromeMock.storage.sync = {
+                get(keys, callback) {
+                    const result = {};
+                    const assign = (key, defaultValue) => {
+                        result[key] = readStoredValue(key, defaultValue);
+                    };
+
+                    if (Array.isArray(keys)) {
+                        keys.forEach(key => assign(key));
+                    } else if (typeof keys === 'object' && keys !== null) {
+                        Object.entries(keys).forEach(([key, defaultValue]) => assign(key, defaultValue));
+                    } else if (keys !== null && keys !== undefined) {
+                        assign(keys);
+                    }
+
+                    if (typeof callback === 'function') {
+                        callback(result);
+                    }
+                },
+                set(items, callback) {
+                    Object.entries(items || {}).forEach(([key, value]) => writeStoredValue(key, value));
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                }
+            };
+
+            chromeMock.action = chromeMock.action || {};
+            if (typeof chromeMock.action.setPopup !== 'function') {
+                chromeMock.action.setPopup = function() {};
+            }
+
+            chromeMock.scripting = chromeMock.scripting || {};
+            if (typeof chromeMock.scripting.executeScript !== 'function') {
+                chromeMock.scripting.executeScript = function(options, callback) {
+                    if (typeof callback === 'function') {
+                        callback();
+                    }
+                };
+            }
+
+            window.chrome = chromeMock;
+
+            function loadExtensionScript(url, context, transform) {
+                return fetch(url).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load ' + url);
+                    }
+                    return response.text();
+                }).then(source => {
+                    const finalSource = typeof transform === 'function' ? transform(source) : source;
+                    const domReadyHandlers = [];
+                    const originalAddEventListener = document.addEventListener;
+
+                    document.addEventListener = function(type, listener, options) {
+                        if (type === 'DOMContentLoaded' && context === 'extension') {
+                            domReadyHandlers.push(listener);
+                            return;
+                        }
+                        return originalAddEventListener.call(document, type, listener, options);
+                    };
+
+                    try {
+                        window.__autoscrollListenerContext = context;
+                        (new Function(finalSource + '\n//# sourceURL=' + url))();
+                    } finally {
+                        window.__autoscrollListenerContext = null;
+                        document.addEventListener = originalAddEventListener;
+                    }
+
+                    return { domReadyHandlers };
+                });
+            }
+
+            function invokeDomReadyHandlers(wrapper) {
+                if (!wrapper || !wrapper.domReadyHandlers || !wrapper.domReadyHandlers.length) {
+                    return;
+                }
+
+                const handlers = wrapper.domReadyHandlers.slice();
+                const triggerHandlers = () => {
+                    handlers.forEach(handler => {
+                        try {
+                            handler(new Event('DOMContentLoaded'));
+                        } catch (err) {
+                            console.error('Autoscroll demo DOMContentLoaded handler error:', err);
+                        }
+                    });
+                };
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function onReady() {
+                        document.removeEventListener('DOMContentLoaded', onReady);
+                        triggerHandlers();
+                    });
+                } else {
+                    triggerHandlers();
+                }
+            }
+
+            loadExtensionScript('Autoscroll/scroll.js', 'content')
+                .then(() => loadExtensionScript('Autoscroll/popup.js', 'extension'))
+                .then(invokeDomReadyHandlers)
+                .then(() => loadExtensionScript(
+                    'Autoscroll/settings.js',
+                    'extension',
+                    source => source.replace(
+                        /window\.location\.href\s*=\s*"popup\.html";/g,
+                        "document.dispatchEvent(new CustomEvent('autoscroll-demo-navigate', { detail: { view: 'popup' } }));"
+                    )
+                ))
+                .then(() => {
+                    const popupEl = document.querySelector('.extension-popup');
+                    const settingsEl = document.querySelector('.extension-settings');
+                    const stopOverlay = document.getElementById('autoscrollStopButton');
+                    const stopOverlayButton = stopOverlay ? stopOverlay.querySelector('.stop-btn') : null;
+                    const floatingStopBtn = document.getElementById('floatingStopBtn');
+                    const floatingResetBtn = document.getElementById('floatingResetBtn');
+                    const scrollButtons = [
+                        document.getElementById('scrollU'),
+                        document.getElementById('scrollD')
+                    ];
+                    const sliderInput = document.getElementById('myRange');
+                    let hasAutoscrolled = false;
+                    let currentDemoView = 'popup';
+
+                    document.addEventListener('autoscroll-demo-navigate', event => {
+                        if (!popupEl || !settingsEl) return;
+                        const view = event.detail && event.detail.view;
+                        if (view === 'settings') {
+                            currentDemoView = 'settings';
+                            goToStep(3);
+                            const stepEl = document.getElementById('step-3');
+                            if (stepEl) {
+                                stepEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        } else if (view === 'popup') {
+                            currentDemoView = 'popup';
+                            goToStep(2);
+                            const stepEl = document.getElementById('step-2');
+                            if (stepEl) {
+                                stepEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                        updateStopOverlay();
+                    });
+
+                    const settingsButton = document.getElementById('settings');
+                    if (settingsButton) {
+                        settingsButton.addEventListener('click', () => {
+                            document.dispatchEvent(new CustomEvent('autoscroll-demo-navigate', { detail: { view: 'settings' } }));
+                        });
+                    }
+
+                    const helpButton = document.getElementById('help');
+                    if (helpButton) {
+                        helpButton.addEventListener('click', () => {
+                            window.open('https://www.autoscroll.org/', '_blank');
+                        });
+                    }
+
+                    function isAutoscrollActive() {
+                        return scrollButtons.some(btn => btn && btn.classList.contains('scrolling'));
+                    }
+
+                    function stopAutoscroll() {
+                        const activeButton = scrollButtons.find(btn => btn && btn.classList.contains('scrolling'));
+                        if (activeButton) {
+                            activeButton.click();
+                        }
+                    }
+
+                    function updateStopOverlay() {
+                        const settingsVisible = currentDemoView === 'settings';
+                        const autoscrollActive = isAutoscrollActive();
+                        if (autoscrollActive) {
+                            hasAutoscrolled = true;
+                        }
+                        const shouldOverlayShow = autoscrollActive && !settingsVisible;
+
+                        if (stopOverlay) {
+                            if (shouldOverlayShow) {
+                                stopOverlay.classList.add('active');
+                            } else {
+                                stopOverlay.classList.remove('active');
+                            }
+                        }
+
+                        if (floatingStopBtn) {
+                            if (shouldOverlayShow) {
+                                floatingStopBtn.classList.remove('is-hidden');
+                            } else {
+                                floatingStopBtn.classList.add('is-hidden');
+                            }
+                        }
+
+                        if (floatingResetBtn) {
+                            const shouldShowReset = !autoscrollActive && hasAutoscrolled;
+                            if (shouldShowReset) {
+                                floatingResetBtn.classList.remove('is-hidden');
+                            } else {
+                                floatingResetBtn.classList.add('is-hidden');
+                            }
+                        }
+                    }
+
+                    if (stopOverlayButton) {
+                        stopOverlayButton.addEventListener('click', () => {
+                            stopAutoscroll();
+                            updateStopOverlay();
+                        });
+                    }
+
+                    if (floatingStopBtn) {
+                        floatingStopBtn.addEventListener('click', () => {
+                            stopAutoscroll();
+                            updateStopOverlay();
+                        });
+                    }
+
+                    const observer = new MutationObserver(() => updateStopOverlay());
+                    scrollButtons.forEach(btn => {
+                        if (btn) {
+                            observer.observe(btn, { attributes: true, attributeFilter: ['class'] });
+                        }
+                    });
+
+                    function resetAutoscrollDemo(stepToShow) {
+                        stopAutoscroll();
+                        chromeMock.storage.sync.set({ scrollSpeed: 50 }, () => {});
+                        if (sliderInput) {
+                            sliderInput.value = 50;
+                            sliderInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        }
+                        if (typeof stepToShow === 'number') {
+                            goToStep(stepToShow);
+                            const stepEl = document.getElementById(`step-${stepToShow}`);
+                            if (stepEl) {
+                                stepEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                        hasAutoscrolled = false;
+                        updateStopOverlay();
+                    }
+
+                    if (floatingResetBtn) {
+                        floatingResetBtn.addEventListener('click', () => {
+                            resetAutoscrollDemo(2);
+                            document.dispatchEvent(new CustomEvent('autoscroll-demo-navigate', { detail: { view: 'popup' } }));
+                        });
+                    }
+
+                    updateStopOverlay();
+                })
+                .catch(err => {
+                    console.error('Autoscroll demo initialization failed:', err);
+                });
+        })();
+
+        const sent = document.getElementById('sent');
+        const sped = document.getElementById('speed');
+        const demoSpeedLabel = document.getElementById('speedLabel');
+        const logoButton = document.getElementById('logo');
+        const logoImage = document.getElementById('logoImage');
+        const helpImage = document.getElementById('helpImage');
+        const settingsImage = document.getElementById('settingsImage');
+    const popupContainer = document.querySelector('.extension-popup');
+    const popupHeading = document.querySelector('.extension-popup h1');
+
+        const imageData = [
+            {
+                srcl: 'Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128.png',
+                srch: 'Autoscroll/UI%20%26%20Design%20Elements/Help_Button_White.png',
+                srcs: 'Autoscroll/UI%20%26%20Design%20Elements/Settings_Button_White.png',
+                bgColor: '#fa5a00',
+                textColor: 'rgb(255, 255, 255) 52%, rgb(255, 127, 39) 60%, rgb(0, 0, 0) 61%',
+                txt: '#000000'
+            },
+            {
+                srcl: 'Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128_White.png',
+                srch: 'Autoscroll/UI%20%26%20Design%20Elements/Help_Button.png',
+                srcs: 'Autoscroll/UI%20%26%20Design%20Elements/Settings_Button.png',
+                bgColor: '#ffffff',
+                textColor: 'rgb(255, 90, 0) 52%, rgb(255, 255, 255) 60%, rgb(0, 0, 0) 61%',
+                txt: '#000000'
+            },
+            {
+                srcl: 'Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128_Black.png',
+                srch: 'Autoscroll/UI%20%26%20Design%20Elements/Help_Button_White_Outline.png',
+                srcs: 'Autoscroll/UI%20%26%20Design%20Elements/Settings_Button_White_Outline.png',
+                bgColor: '#000000',
+                textColor: 'rgb(250, 90, 0) 52%, rgb(255, 255, 255) 60%, rgb(255, 255, 255) 61%',
+                txt: '#ffffff'
+            },
+            {
+                srcl: 'Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128_Gray.png',
+                srch: 'Autoscroll/UI%20%26%20Design%20Elements/Help_Button.png',
+                srcs: 'Autoscroll/UI%20%26%20Design%20Elements/Settings_Button.png',
+                bgColor: '#757575',
+                textColor: 'rgb(250, 90, 40) 52%, rgb(224, 246, 255) 60%, rgb(0, 0, 0) 61%',
+                txt: '#000000'
+            },
+            {
+                srcl: 'Autoscroll/UI%20%26%20Design%20Elements/Autoscroll_Logo_128_Light_Gray.png',
+                srch: 'Autoscroll/UI%20%26%20Design%20Elements/Help_Button_White.png',
+                srcs: 'Autoscroll/UI%20%26%20Design%20Elements/Settings_Button_White.png',
+                bgColor: '#8a8a8a',
+                textColor: 'rgb(0, 0, 0) 52%, rgb(224, 246, 255) 60%, rgb(0, 0, 0) 61%',
+                txt: '#000000'
+            }
+        ];
+
+        let currentImageIndex = 0;
+
+        if (logoButton) {
+            logoButton.addEventListener('click', () => {
+                currentImageIndex = (currentImageIndex + 1) % imageData.length;
+                const currentData = imageData[currentImageIndex];
+
+                if (logoImage) logoImage.src = currentData.srcl;
+                if (helpImage) helpImage.src = currentData.srch;
+                if (settingsImage) settingsImage.src = currentData.srcs;
+                if (popupContainer) popupContainer.style.backgroundColor = currentData.bgColor;
+                if (popupHeading) {
+                    popupHeading.style.background = `linear-gradient(to right, rgba(255, 215, 255, 0) 0%, rgba(225, 255, 255, 0) 20%, rgba(255, 255, 255, 0) 61%), linear-gradient(${currentData.textColor})`;
+                    popupHeading.style.backgroundClip = 'text';
+                    popupHeading.style.webkitBackgroundClip = 'text';
+                }
+                if (sped) sped.style.color = currentData.txt;
+                if (sent) sent.style.color = currentData.txt;
+                if (demoSpeedLabel) demoSpeedLabel.style.color = currentData.txt;
+            });
+        }
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowLeft' || event.key === 'a' || event.key === 'A') {
+                event.preventDefault();
+                if (currentStep > 1) {
+                    goToStep(currentStep - 1);
+                }
+            }
+            
+            if (event.key === 'ArrowRight' || event.key === 'd' || event.key === 'D') {
+                event.preventDefault();
+                if (currentStep < totalSteps) {
+                    goToStep(currentStep + 1);
+                }
+            }
+            
+            const num = parseInt(event.key);
+            if (num >= 1 && num <= totalSteps) {
+                event.preventDefault();
+                goToStep(num);
             }
         });
     </script>
