@@ -28,12 +28,12 @@
   touch-action: manipulation;
   will-change: transform,opacity;
   z-index: 0;
-  background-image: url('UI & Design Elements/Function_Button.png'); 
+  background-image: url('UI%20%26%20Design%20Elements/Function_Button.png'); 
   background-size: cover;
 }
 
 .button-wide:hover {
-  background-image: url('UI & Design Elements/Function_Button_Hover.png'); 
+  background-image: url('UI%20%26%20Design%20Elements/Function_Button_Hover.png'); 
   background-size: cover;
   color: #ff8b3e;
 }
